@@ -36,3 +36,15 @@ class DivExplorer_Entropy(ClassificationCriterion):
             entropy = -f_o * np.log2(f_o) - (1 - f_o) * np.log2(1 - f_o)
         
         return entropy
+    """Split quality function,
+        To favor balanced splits, we weigh
+the entropy by the size of the split nodes, as common in
+classification trees [20], [21]. Thus, we let the gain of the
+split of S into S1, S2 be:
+    """
+    def split_gain(self, split_left, split_right, outcome_func, d_Val):
+        card_S = np.sum(outcome_func(self.samples[self.start:self.end]))
+        card_S1 = np.sum(outcome_func(split_left.samples[split_left.start:split_left.end]))
+        card_S2 = np.sum(outcome_func(split_right.samples[split_right.start:split_right.end]))
+        return card_S*node_impurity(self, outcome_func)/d_Val - (card_S1*node_impurity(split_left, outcome_func)/d_Val + card_S1*node_impurity(split_right, outcome_func)/d_Val))
+
